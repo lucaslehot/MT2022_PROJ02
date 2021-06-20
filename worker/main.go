@@ -14,11 +14,6 @@ import (
 	"github.com/nfnt/resize"
 )
 
-type Task struct {
-	Order  string
-	UserId int
-}
-
 func main() {
 	err := database.Connect()
 	if err != nil {
@@ -26,11 +21,14 @@ func main() {
 	}
 
 	// Setting up Redis connection
-	connection, err := rmq.OpenConnection("message_broker", "tcp", "localhost:6379", 1, nil)
+	connection, err := rmq.OpenConnection("message_broker", "tcp", "localhost:6379", 1, errChan)
 	taskQueue, err := connection.OpenQueue("tasks")
 
 	// CREATE CONSUMER FUNCTION
-	err := taskQueue.StartConsuming(10, time.Second)
+	consumeErr := taskQueue.StartConsuming(10, time.Second)
+	if consumeErr != nil {
+		log.Fatalf("could not connect to db: %v", consumeErr)
+	}
 	name, err := taskQueue.AddConsumerFunc(func(delivery rmq.Delivery) {
 		var task Task
 		if err = json.Unmarshal([]byte(delivery.Payload()), &task); err != nil {
