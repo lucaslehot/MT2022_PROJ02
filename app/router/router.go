@@ -33,10 +33,10 @@ func NewRouter() *mux.Router {
 
 var routes = Routes{
 	Route{
-		Name:        "Home",
-		Method:      "GET",
-		Pattern:     "/",
-		HandlerFunc: controllers.RenderHome,
+		Name:        "Upload file",
+		Method:      "POST",
+		Pattern:     `/image/upload`,
+		HandlerFunc: controllers.UploadFile,
 	},
 
 	// User management routes
