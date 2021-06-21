@@ -1,20 +1,26 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+
+	"github.com/adjust/rmq/v3"
+	"github.com/lucaslehot/MT2022_PROJ02/app/database"
+	"github.com/lucaslehot/MT2022_PROJ02/app/models"
 )
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	// Setting up Redis connection
-	// connection, err := rmq.OpenConnection("message_broker", "tcp", "localhost:6379", 1, nil)
-	// taskQueue, err := connection.OpenQueue("tasks")
+	connection, err := rmq.OpenConnection("message_broker", "tcp", "localhost:6379", 1, nil)
+	taskQueue, err := connection.OpenQueue("tasks")
 
-	// redisErr := database.Connect()
-	// if redisErr != nil {
-	// 	log.Fatalf("Impossible de se connecter à la bdd: %v", redisErr)
-	// }
+	redisErr := database.Connect()
+	if redisErr != nil {
+		log.Fatalf("Impossible de se connecter à la bdd: %v", redisErr)
+	}
 
 	//-----------------------------
 	fmt.Println("File Upload Endpoint Hit")
@@ -66,15 +72,32 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	// user.AvatarPath = "./" + string(1)
 
-	// task := models.Task{"generate_conversions", 1}
+	task := models.Task{"generate_conversions", 1}
 
-	// taskBytes, err := json.Marshal(task)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	taskBytes, err := json.Marshal(task)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// err = taskQueue.PublishBytes(taskBytes)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	err = taskQueue.PublishBytes(taskBytes)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+func PingWorker(w http.ResponseWriter, r *http.Request) {
+	// Setting up Redis connection
+	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
+	taskQueue, err := connection.OpenQueue("tasks")
+
+	task := models.Task{"generate_conversions", 1}
+
+	taskBytes, err := json.Marshal(task)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = taskQueue.PublishBytes(taskBytes)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
