@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"time"
-	"os"
 	"image"
-	"jpeg"
-	"github.com/nfnt/resize"
+	"image/jpeg"
+	"log"
+	"os"
+	"time"
+
 	"github.com/adjust/rmq/v3"
 	"github.com/lucaslehot/MT2022_PROJ02/app/database"
 	"github.com/lucaslehot/MT2022_PROJ02/app/models"
+	"github.com/nfnt/resize"
 )
 
 func main() {
@@ -41,15 +42,15 @@ func main() {
 			return
 		}
 
-	 	// perform task
-	 	img := getAvatar(task.UserId)
+		// perform task
+		img := getAvatar(task.UserId)
+		generateConversion(img)
+		// 3 - generate image conversions
+		// 4 - store conversions in volume
 
-	 	// 3 - generate image conversions
-	 	// 4 - store conversions in volume
-
-	 	log.Printf("performing task %s", task)
+		log.Printf("performing task %s", task)
 		if err := delivery.Ack(); err != nil {
-		// handle ack error
+			// handle ack error
 		}
 
 	})
@@ -66,7 +67,7 @@ func getAvatar(userId int) {
 
 	// 2 - retrieve image form volume
 	// open avatar
-	file, err := os.Open(user.avatar_path)
+	file, err := os.Open(user.AvatarPath)
 	if err != nil {
 		log.Fatal(err)
 	}
