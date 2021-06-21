@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"time"
-	"os"
-	"image/jpeg"
 	"image"
-	"github.com/nfnt/resize"
+	"image/jpeg"
+	"log"
+	"os"
+	"time"
+
 	"github.com/adjust/rmq/v3"
 	"github.com/lucaslehot/MT2022_PROJ02/app/database"
 	"github.com/lucaslehot/MT2022_PROJ02/app/models"
+	"github.com/nfnt/resize"
 )
 
 func main() {
@@ -42,15 +43,15 @@ func main() {
 			return
 		}
 
-	 	// perform task
-	 	// img := getAvatar(task.UserId) still not used, so in order to advance we have to comment it 
+		// perform task
+		img := getAvatar(task.UserId)
+		generateConversion(img)
+		// 3 - generate image conversions
+		// 4 - store conversions in volume
 
-	 	// 3 - generate image conversions
-	 	// 4 - store conversions in volume
-
-	 	log.Printf("performing task %v", task)
+		log.Printf("performing task %v", task)
 		if err := delivery.Ack(); err != nil {
-		// handle ack error
+			// handle ack error
 		}
 
 	})
