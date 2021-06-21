@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 	"os"
+	"image/jpeg"
 	"image"
-	"jpeg"
 	"github.com/nfnt/resize"
 	"github.com/adjust/rmq/v3"
 	"github.com/lucaslehot/MT2022_PROJ02/app/database"
@@ -20,19 +20,20 @@ func main() {
 		log.Fatalf("could not connect to db: %v", err)
 	}
 
+	
+
 	// Setting up Redis connection
 	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
 	taskQueue, err := connection.OpenQueue("tasks")
+	
 
 	fmt.Printf("queue connected: %v", taskQueue)
 
 	// CREATE CONSUMER FUNCTION
-	consumeErr := taskQueue.StartConsuming(10, time.Second)
-	if consumeErr != nil {
-		log.Fatalf("could not connect to db: %v", consumeErr)
-	}
+	
 	taskQueue.AddConsumerFunc("log", func(delivery rmq.Delivery) {
 		var task models.Task
+		log.Printf("teub")
 		if err = json.Unmarshal([]byte(delivery.Payload()), &task); err != nil {
 			// handle json error
 			if err := delivery.Reject(); err != nil {
@@ -42,20 +43,31 @@ func main() {
 		}
 
 	 	// perform task
-	 	img := getAvatar(task.UserId)
+	 	// img := getAvatar(task.UserId) still not used, so in order to advance we have to comment it 
 
 	 	// 3 - generate image conversions
 	 	// 4 - store conversions in volume
 
-	 	log.Printf("performing task %s", task)
+	 	log.Printf("performing task %v", task)
 		if err := delivery.Ack(); err != nil {
 		// handle ack error
 		}
 
 	})
+
+	forever := make(chan bool)
+	go func ()  {
+		consumeErr := taskQueue.StartConsuming(10, time.Second) // donc la il récupères un truc avec task queue et en haut c'est le même task queue donc c'est bien fait quand même
+	
+		if consumeErr != nil {
+			log.Fatalf("could not connect to db: %v", consumeErr)
+		}
+	}()
+	log.Printf("MASTER FEED ME")
+	<-forever
 }
 
-func getAvatar(userId int) {
+func getAvatar(userId int) image.Image {
 	// 1 - get avatar url from db
 	db := database.DbConn
 	var user models.User
@@ -66,14 +78,14 @@ func getAvatar(userId int) {
 
 	// 2 - retrieve image form volume
 	// open avatar
-	file, err := os.Open(user.avatar_path)
-	if err != nil {
+	file, err2 := os.Open(user.AvatarPath)
+	if err2 != nil {
 		log.Fatal(err)
 	}
 
 	// decode jpeg into image.Image
-	img, err := jpeg.Decode(file)
-	if err != nil {
+	img, err3 := jpeg.Decode(file)
+	if err3 != nil {
 		log.Fatal(err)
 	}
 	file.Close()
