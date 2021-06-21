@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"time"
-
+	"os"
+	"image"
+	"jpeg"
+	"github.com/nfnt/resize"
 	"github.com/adjust/rmq/v3"
 	"github.com/lucaslehot/MT2022_PROJ02/app/database"
 	"github.com/lucaslehot/MT2022_PROJ02/app/models"
@@ -21,7 +24,7 @@ func main() {
 	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
 	taskQueue, err := connection.OpenQueue("tasks")
 
-	fmt.Printf("queue connected: ", taskQueue)
+	fmt.Printf("queue connected: %v", taskQueue)
 
 	// CREATE CONSUMER FUNCTION
 	consumeErr := taskQueue.StartConsuming(10, time.Second)
@@ -38,58 +41,57 @@ func main() {
 			return
 		}
 
-		log.Printf("hello wordl")
-		// // perform task
-		// img := getAvatar(task.UserId)
+	 	// perform task
+	 	img := getAvatar(task.UserId)
 
-		// // 3 - generate image conversions
-		// // 4 - store conversions in volume
+	 	// 3 - generate image conversions
+	 	// 4 - store conversions in volume
 
-		// log.Printf("performing task %s", task)
+	 	log.Printf("performing task %s", task)
 		if err := delivery.Ack(); err != nil {
-			// handle ack error
+		// handle ack error
 		}
 
 	})
 }
 
-// func getAvatar(userId int) {
-// 	// 1 - get avatar url from db
-// 	db := database.DbConn
-// 	var user models.User
-// 	err := db.Where("id = ?", userId).Find(&user)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+func getAvatar(userId int) {
+	// 1 - get avatar url from db
+	db := database.DbConn
+	var user models.User
+	err := db.Where("id = ?", userId).Find(&user)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	// 2 - retrieve image form volume
-// 	// open avatar
-// 	file, err := os.Open(user.avatar_path)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	// 2 - retrieve image form volume
+	// open avatar
+	file, err := os.Open(user.avatar_path)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	// decode jpeg into image.Image
-// 	img, err := jpeg.Decode(file)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	file.Close()
+	// decode jpeg into image.Image
+	img, err := jpeg.Decode(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
 
-// 	return img
-// }
+	return img
+}
 
-// func generateConversion(img image.Image) {
-// 	// resize to width 1000 using NearestNeighbor resampling
-// 	// and preserve aspect ratio
-// 	m := resize.Resize(1000, 0, img, resize.NearestNeighbor)
+func generateConversion(img image.Image) {
+	// resize to width 1000 using NearestNeighbor resampling
+	// and preserve aspect ratio
+	m := resize.Resize(1000, 0, img, resize.NearestNeighbor)
 
-// 	out, err := os.Create("test_resized.jpg")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer out.Close()
+	out, err := os.Create("test_resized.jpg")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
 
-// 	// write new image to file
-// 	jpeg.Encode(out, m, nil)
-// }
+	// write new image to file
+	jpeg.Encode(out, m, nil)
+}
