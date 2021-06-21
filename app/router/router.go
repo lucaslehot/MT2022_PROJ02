@@ -39,6 +39,13 @@ var routes = Routes{
 		HandlerFunc: controllers.UploadFile,
 	},
 
+	Route{
+		Name:        "Ping Worker",
+		Method:      "GET",
+		Pattern:     `/ping`,
+		HandlerFunc: controllers.PingWorker,
+	},
+
 	// User management routes
 
 	Route{
