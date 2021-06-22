@@ -69,22 +69,19 @@ func getAvatar(userId int) image.Image {
 	// 1 - get avatar url from db
 	db := database.DbConn
 	var user models.User
-	err := db.Where("id = ?", userId).Find(&user)
-	if err != nil {
-		log.Fatal(err)
-	}
+	db.Where("id = ?", userId).Find(&user)
 
 	// 2 - retrieve image form volume
 	// open avatar
-	file, err2 := os.Open(user.AvatarPath)
-	if err2 != nil {
-		log.Fatal(err)
+	file, err1 := os.Open(user.AvatarPath)
+	if err1 != nil {
+		log.Fatal(err1)
 	}
 
 	// decode jpeg into image.Image
-	img, err3 := jpeg.Decode(file)
-	if err3 != nil {
-		log.Fatal(err)
+	img, err2 := jpeg.Decode(file)
+	if err2 != nil {
+		log.Fatal(err2)
 	}
 	file.Close()
 

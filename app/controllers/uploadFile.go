@@ -65,13 +65,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	db := database.DbConn
 
-	var user models.User
-	dbErr := db.Where("id = ?", 1).Find(&user)
-	if dbErr != nil {
-		log.Fatalf("could not serve on port %s", 8080)
-	}
-
-	user.AvatarPath = "./avatars" + string(1)
+	db.Model(&models.User{}).Where("id = ?", 1).Update("avatar_path", "./avatars" + string(1))
 
 	task := models.Task{"generate_conversions", 1}
 
