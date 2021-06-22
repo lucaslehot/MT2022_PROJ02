@@ -111,6 +111,7 @@ Redis-server is on port 6379.
 Database is on port 3306.
 
 # Known Issues
+It is necessary to create a user with id = 1 first for the process to work
 
 # Built With
 * [Golang](https://golang.org/) - Open source programming language
