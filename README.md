@@ -86,9 +86,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Quick Start
 ```
-go run .
+docker-compose build
+docker-compose up -d db redis-server
+docker-compose up 
 ```
-Congratulations.
+
+Web app is now available on port 8080.
 
 ## Deployment
 
