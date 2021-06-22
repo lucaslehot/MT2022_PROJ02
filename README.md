@@ -82,9 +82,23 @@ These instructions will get you a copy of the project up and running on your loc
 * Docker installed and running
 * Familiarity with basic Docker functionality and commands
 
-## Installation
+## Deployment
 
-## Quick Start
+In App:
+```
+go mod init
+go mod tidy
+go get
+```
+
+In Worker:
+```
+go mod init
+go mod tidy
+go get
+```
+
+From root:
 ```
 docker-compose build
 docker-compose up -d db redis-server
@@ -92,8 +106,9 @@ docker-compose up
 ```
 
 Web app is now available on port 8080.
-
-## Deployment
+Worker is on port 3000.
+Redis-server is on port 6379.
+Database is on port 3306.
 
 # Known Issues
 
