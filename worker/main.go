@@ -50,10 +50,10 @@ func main() {
 
 			// perform task
 			img := getAvatar(task.UserId)
-			generateConversion(img)
-
 			// 3 - generate image conversions
+			generateConversion(img)
 			// 4 - store conversions in volume
+			storeImage(img)
 
 			log.Printf("performing task %v", task)
 			if err := delivery.Ack(); err != nil {
@@ -107,7 +107,7 @@ func generateConversion(img image.Image) {
 }
 
 func storeImage(img image.Image) {
-	tempFile, err := ioutil.TempFile("avatar-upload/*", "upload-conversion.png")
+	tempFile, err := ioutil.TempFile("avatar-upload", "upload-*-conversion.png")
 	if err != nil {
 		fmt.Println(err)
 	}
