@@ -107,7 +107,7 @@ func generateConversion(img image.Image) {
 }
 
 func storeImage(img image.Image) {
-	tempFile, err := ioutil.TempFile("avatar-upload", "upload-*-conversion.png")
+	tempFile, err := ioutil.TempFile("/avatars", "upload-*-conversion.png")
 	if err != nil {
 		fmt.Println(err)
 	}

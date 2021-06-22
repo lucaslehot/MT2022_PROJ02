@@ -39,6 +39,13 @@ var routes = Routes{
 		HandlerFunc: controllers.UploadFile,
 	},
 
+	Route{
+		Name:        "Display image form",
+		Method:      "GET",
+		Pattern:     "/image/new",
+		HandlerFunc: controllers.RenderImageForm,
+	},
+
 	// User management routes
 
 	Route{

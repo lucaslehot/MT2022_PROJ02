@@ -3,9 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"github.com/gobuffalo/packr/v2"
 
 	"github.com/adjust/rmq/v3"
 	"github.com/lucaslehot/MT2022_PROJ02/app/database"
@@ -44,7 +46,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	// Create a temporary file within our temp-images directory that follows
 	// a particular naming pattern
-	tempFile, err := ioutil.TempFile("avatar-upload", "upload-*.png")
+	tempFile, err := ioutil.TempFile("/avatars", "upload-*.png")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -69,7 +71,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("could not serve on port %s", 8080)
 	}
 
-	user.AvatarPath = "./" + string(1)
+	user.AvatarPath = "./avatars" + string(1)
 
 	task := models.Task{"generate_conversions", 1}
 
@@ -81,5 +83,26 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	err = taskQueue.PublishBytes(taskBytes)
 	if err != nil {
 		fmt.Println(err)
+	}
+}
+
+var box = packr.New("templateBox", "../views")
+
+func RenderImageForm(w http.ResponseWriter, r *http.Request) {
+	tpl := template.New("uploadImageForm.html")
+	articleForm, err := box.FindString("uploadImageForm.html")
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	t, err := tpl.Parse(articleForm) // Parse template file.
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	err = t.Execute(w, nil) // merge.
+	if err != nil {
+		log.Print(err)
+		return
 	}
 }

@@ -13,7 +13,7 @@ func main() {
 
 	log.Print("\nServer started on port " + port)
 
-	newRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./views/")))
+	newRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./views")))
 
 	err := http.ListenAndServe(":"+port, newRouter)
 	if err != nil {
