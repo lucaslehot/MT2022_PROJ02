@@ -46,7 +46,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	// Create a temporary file within our temp-images directory that follows
 	// a particular naming pattern
-	tempFile, err := ioutil.TempFile("/avatars", "upload-*.png")
+	tempFile, err := ioutil.TempFile("/avatars", "my_image.jpeg")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -65,7 +65,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	db := database.DbConn
 
-	db.Model(&models.User{}).Where("id = ?", 1).Update("avatar_path", "./avatars" + string(1))
+	db.Model(&models.User{}).Where("id = ?", 1).Update("avatar_path", tempFile.Name())
 
 	task := models.Task{"generate_conversions", 1}
 

@@ -55,13 +55,13 @@ func main() {
 			// 4 - store conversions in volume
 			storeImage(img)
 
-			log.Printf("performing task %v", task)
+			log.Printf("Task performed", task)
 			if err := delivery.Ack(); err != nil {
 				// handle ack error
 			}
 		})
 	}()
-	log.Printf("MASTER FEED ME")
+	log.Printf("Watcher running")
 	<-forever
 }
 
@@ -104,7 +104,7 @@ func generateConversion(img image.Image) {
 }
 
 func storeImage(img image.Image) {
-	tempFile, err := ioutil.TempFile("/avatars", "upload-*-conversion.png")
+	tempFile, err := ioutil.TempFile("./avatars", "upload-*-conversion.png")
 	if err != nil {
 		fmt.Println(err)
 	}
