@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lucaslehot/MT2022_PROJ02/app v0.0.0-20210621110233-65b2f6c8f58e
 	github.com/lucaslehot/MT2022_PROJ02/worker v0.0.0-20210621110233-65b2f6c8f58e
-	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.11
 )

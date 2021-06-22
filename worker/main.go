@@ -21,17 +21,14 @@ func main() {
 		log.Fatalf("could not connect to db: %v", err)
 	}
 
-	
-
 	// Setting up Redis connection
 	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
 	taskQueue, err := connection.OpenQueue("tasks")
-	
 
 	fmt.Printf("queue connected: %v", taskQueue)
 
 	// CREATE CONSUMER FUNCTION
-	
+
 	taskQueue.AddConsumerFunc("log", func(delivery rmq.Delivery) {
 		var task models.Task
 		log.Printf("teub")
@@ -57,9 +54,9 @@ func main() {
 	})
 
 	forever := make(chan bool)
-	go func ()  {
+	go func() {
 		consumeErr := taskQueue.StartConsuming(10, time.Second) // donc la il récupères un truc avec task queue et en haut c'est le même task queue donc c'est bien fait quand même
-	
+
 		if consumeErr != nil {
 			log.Fatalf("could not connect to db: %v", consumeErr)
 		}
