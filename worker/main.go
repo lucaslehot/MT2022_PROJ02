@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -50,6 +51,7 @@ func main() {
 			// perform task
 			img := getAvatar(task.UserId)
 			generateConversion(img)
+
 			// 3 - generate image conversions
 			// 4 - store conversions in volume
 
@@ -57,7 +59,6 @@ func main() {
 			if err := delivery.Ack(); err != nil {
 				// handle ack error
 			}
-
 		})
 	}()
 	log.Printf("MASTER FEED ME")
@@ -103,4 +104,21 @@ func generateConversion(img image.Image) {
 
 	// write new image to file
 	jpeg.Encode(out, m, nil)
+}
+
+func storeImage(img image.Image) {
+	tempFile, err := ioutil.TempFile("avatar-upload/*", "upload-conversion.png")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer tempFile.Close()
+
+	// write this byte array to our temporary file
+	err = jpeg.Encode(tempFile, img, nil)
+	if err != nil {
+		// Handle error
+	}
+
+	// return that we have successfully uploaded our file!
+	fmt.Printf("Successfully Uploaded Conversion\n")
 }
