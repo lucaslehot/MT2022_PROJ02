@@ -25,6 +25,11 @@ The aim of this project is to experiment FaaS (Function as a service), by implem
 # Overview
 This project should be carried out according to the following guidelines:
 
+![alt text](./cloud.PNG/)
+![alt text](./cloudless.PNG/)
+
+We will be focusing on the second architecture. 
+
 Our system is composed of :
 - One app container
 - One worker container
