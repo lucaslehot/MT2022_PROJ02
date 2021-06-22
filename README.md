@@ -57,20 +57,6 @@ The typical happy path is the following :
 - It stores the newly generated conversions in the volume.
 - It notifies the queue that the task has been handled.
 
-# Todo 
-***before*** June 22th :
-- send an e-mail to the teacher with a link towards this repo.
-- make the teacher a contributor if the repo is not public.
-- we shall all be in copy of the mail
-- inside 
-
-The repo should include :
-* the code corresponding to the Local version
-* with a complete Readme, including 
-    * the 2 schemas (any format)
-    * how to run the app
-    * how to test it (e.g.: does it launch a localhost:8080 with an interface and an image ?)
-
 # Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) section for notes on how to deploy the project on a live system.
 
