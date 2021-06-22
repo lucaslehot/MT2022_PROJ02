@@ -14,7 +14,7 @@ import (
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	// Setting up Redis connection
-	connection, err := rmq.OpenConnection("message_broker", "tcp", "localhost:6379", 1, nil)
+	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
 	taskQueue, err := connection.OpenQueue("tasks")
 
 	redisErr := database.Connect()
@@ -61,33 +61,15 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	// return that we have successfully uploaded our file!
 	fmt.Fprintf(w, "Successfully Uploaded File\n")
 
-	//-----------------------------
-	// db := database.DbConn
+	db := database.DbConn
 
-	// var user models.User
-	// dbErr := db.Where("id = ?", 1).Find(&user)
-	// if dbErr != nil {
-	// 	log.Fatalf("could not serve on port %s", 8080)
-	// }
-
-	// user.AvatarPath = "./" + string(1)
-
-	task := models.Task{"generate_conversions", 1}
-
-	taskBytes, err := json.Marshal(task)
-	if err != nil {
-		fmt.Println(err)
+	var user models.User
+	dbErr := db.Where("id = ?", 1).Find(&user)
+	if dbErr != nil {
+		log.Fatalf("could not serve on port %s", 8080)
 	}
 
-	err = taskQueue.PublishBytes(taskBytes)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-func PingWorker(w http.ResponseWriter, r *http.Request) {
-	// Setting up Redis connection
-	connection, err := rmq.OpenConnection("message_broker", "tcp", "redis-server:6379", 1, nil)
-	taskQueue, err := connection.OpenQueue("tasks")
+	user.AvatarPath = "./" + string(1)
 
 	task := models.Task{"generate_conversions", 1}
 

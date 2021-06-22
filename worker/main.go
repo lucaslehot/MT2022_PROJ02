@@ -29,30 +29,6 @@ func main() {
 
 	// CREATE CONSUMER FUNCTION
 
-	taskQueue.AddConsumerFunc("log", func(delivery rmq.Delivery) {
-		var task models.Task
-		log.Printf("teub")
-		if err = json.Unmarshal([]byte(delivery.Payload()), &task); err != nil {
-			// handle json error
-			if err := delivery.Reject(); err != nil {
-				// handle reject error
-			}
-			return
-		}
-
-		// perform task
-		img := getAvatar(task.UserId)
-		generateConversion(img)
-		// 3 - generate image conversions
-		// 4 - store conversions in volume
-
-		log.Printf("performing task %v", task)
-		if err := delivery.Ack(); err != nil {
-			// handle ack error
-		}
-
-	})
-
 	forever := make(chan bool)
 	go func() {
 		consumeErr := taskQueue.StartConsuming(10, time.Second) // donc la il récupères un truc avec task queue et en haut c'est le même task queue donc c'est bien fait quand même
@@ -60,6 +36,29 @@ func main() {
 		if consumeErr != nil {
 			log.Fatalf("could not connect to db: %v", consumeErr)
 		}
+
+		taskQueue.AddConsumerFunc("log", func(delivery rmq.Delivery) {
+			var task models.Task
+			if err = json.Unmarshal([]byte(delivery.Payload()), &task); err != nil {
+				// handle json error
+				if err := delivery.Reject(); err != nil {
+					// handle reject error
+				}
+				return
+			}
+
+			// perform task
+			img := getAvatar(task.UserId)
+			generateConversion(img)
+			// 3 - generate image conversions
+			// 4 - store conversions in volume
+
+			log.Printf("performing task %v", task)
+			if err := delivery.Ack(); err != nil {
+				// handle ack error
+			}
+
+		})
 	}()
 	log.Printf("MASTER FEED ME")
 	<-forever
